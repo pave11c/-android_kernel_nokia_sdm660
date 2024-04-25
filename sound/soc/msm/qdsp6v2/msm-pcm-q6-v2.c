@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2019, The Linux Foundation. All rights reserved.
+/* Copyright (c) 2012-2018, 2020 The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -2312,6 +2312,7 @@ static int msm_pcm_channel_mixer_cfg_ctl_put(struct snd_kcontrol *kcontrol,
 		return -EINVAL;
 	}
 
+	mutex_lock(&pdata->lock);
 	pcm = pdata->pcm_device[fe_id];
 	if (!pcm) {
 		pr_err("%s invalid pcm handle for fe_id %llu\n",
@@ -3175,14 +3176,6 @@ static int msm_pcm_probe(struct platform_device *pdev)
 	} else {
 		pdata->perf_mode = LEGACY_PCM_MODE;
 	}
-
-	if (of_property_read_bool(pdev->dev.of_node,
-				"qcom,avs-version"))
-		pdata->avs_ver = true;
-	else
-		pdata->avs_ver = false;
-
-	pr_debug("%s: avs_ver = %d\n", __func__, pdata->avs_ver);
 
 	mutex_init(&pdata->lock);
 	dev_set_drvdata(&pdev->dev, pdata);
